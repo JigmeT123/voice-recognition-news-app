@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect, createRef} from 'react'
 import {
     Typography,
     Card,
@@ -24,8 +24,20 @@ const NewsCardChild = ({
     activeElement
 }) => {
     const classes = useStyles();
+    const [refElement, setRefElement] = useState([]);
+    const scroolToElement = ref => window.scrollTo(0, ref.current.offsetTop - 10);
+
+    useEffect(()=> {
+        setRefElement(ref => Array(20).fill().map((_, j) => ref[j] || createRef()));
+    }, []);
+    useEffect(()=> {
+        if(index === activeElement && refElement[activeElement]){
+            scroolToElement(refElement[activeElement]);
+        }
+    }, [index, activeElement, refElement]);
+
     return (
-        <Card className={classNames(classes.card, activeElement === index ? classes.activeCard : null)}>
+        <Card ref={refElement[index]} className={classNames(classes.card, activeElement === index ? classes.activeCard : null)}>
             <CardActionArea href={url} target="_blank">
                 <CardMedia className={classes.media} image={urlToImage || logo}/>
                 <div className={classes.details}>
